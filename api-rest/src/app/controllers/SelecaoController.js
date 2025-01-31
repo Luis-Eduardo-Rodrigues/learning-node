@@ -1,71 +1,38 @@
-import conn from "../database/conexao.js";
+import SelecaoRepository from "../repositories/SelecaoRepository.js";
 
 class SelecaoController {
-  index(req, res) {
-    const sql = "SELECT * FROM selecoes";
-    conn.query(sql, (err, response) => {
-      if (err) {
-        res.status(404).json({ err: err });
-      } else {
-        res.status(200).json(response);
-      }
-    });
+  async index(req, res) {
+    const row = await SelecaoRepository.findAll();
+    res.json(row);
   }
 
-  show(req, res) {
+  async show(req, res) {
     const id = req.params.id;
-    const sql = "SELECT * FROM selecoes WHERE id=?";
-    conn.query(sql, id, (err, response) => {
-      const row = response[0];
-      if (err) {
-        res.status(404).json({ err: err });
-      } else {
-        res.status(200).json(row);
-      }
-    });
+    const row = await SelecaoRepository.findById(id);
+
+    res.json(row);
   }
 
-  store(req, res) {
-    const dados = req.body;
+  async store(req, res) {
+    const selecao = req.body;
 
-    const sql = "INSERT INTO selecoes SET ?";
-
-    conn.query(sql, dados, (err, response) => {
-      const row = response[0];
-      if (err) {
-        res.status(404).json({ err: err });
-      } else {
-        res.status(201).json({ msg: "Seleção cadastrada!" });
-      }
-    });
+    const row = await SelecaoRepository.create(selecao);
+    res.json(row);
   }
 
-  update(req, res) {
+  async update(req, res) {
     const id = req.params.id;
     const dados = req.body;
 
-    const sql = "UPDATE selecoes SET ? WHERE id=?";
-
-    conn.query(sql, [dados, id], (err, response) => {
-      const row = response[0];
-      if (err) {
-        res.status(404).json({ err: err });
-      } else {
-        res.status(200).json({ msg: "Seleção atualizada!" });
-      }
-    });
+    const row = await SelecaoRepository.update(dados, id);
+    res.json(row);
   }
 
-  delete(req, res) {
+  async delete(req, res) {
     const id = req.params.id;
-    const sql = "DELETE FROM selecoes WHERE id=?";
-    conn.query(sql, id, (err, response) => {
-      if (err) {
-        res.status(404).json({ err: err });
-      } else {
-        res.status(200).json({ msg: "Seleção deletada!" });
-      }
-    });
+
+    const row = await SelecaoRepository.delete(id);
+    res.json(row);
   }
 }
 
